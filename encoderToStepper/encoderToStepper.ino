@@ -1,6 +1,5 @@
 const uint8_t APin = 2;
 const uint8_t BPin = 0;
-//const uint8_t LEDPin = 1;
 const uint8_t directionPin = 4;
 const uint8_t pulsePin = 1;
 
@@ -11,6 +10,7 @@ const uint8_t stateBothTriggered = 3;
 
 uint8_t thisState = 0;
 uint8_t lastState;
+uint8_t delayTime;
 
 bool aPinState;
 bool bPinState;
@@ -20,10 +20,9 @@ const int stepsPerTurn = 10;
 void setup() {
   pinMode (APin, INPUT);
   pinMode (BPin, INPUT);  
-  //pinMode (LEDPin, OUTPUT);
   pinMode (directionPin, OUTPUT);
   pinMode (pulsePin, OUTPUT);
-    
+
 }
 
 void loop() {
@@ -54,16 +53,23 @@ void loop() {
   else {
     digitalWrite(directionPin, HIGH);
   }
-  if (abs(stepsToGo) > 0){
+  uint8_t absSteps = abs(stepsToGo);
+  if (absSteps > 0){
+    if (absSteps > 100){
+      delayTime = 150;
+    }
+    else if (absSteps > 50){
+      delayTime = 225;
+    }
+    else {
+      delayTime = 300;
+    }
     digitalWrite(pulsePin, LOW);
-    delayMicroseconds(100);
+    delayMicroseconds(delayTime);
     digitalWrite(pulsePin, HIGH);  
-    delayMicroseconds(300);
+    delayMicroseconds(delayTime);
     stepsToGo += stepsToGo < 0 ? 1 : -1; 
-    //digitalWrite(LEDPin, HIGH);
   }
-  //else{
-    //digitalWrite(LEDPin, LOW);  
-  //}*/
+
 
 }
