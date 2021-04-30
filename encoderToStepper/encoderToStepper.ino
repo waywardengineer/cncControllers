@@ -16,7 +16,7 @@ bool aPinState;
 bool bPinState;
 const int8_t directionFlip = 1;
 int stepsToGo = 0;
-const int stepsPerTurn = 10;
+const int stepsPerTurn = 15;
 void setup() {
   pinMode (APin, INPUT);
   pinMode (BPin, INPUT);  
@@ -53,16 +53,16 @@ void loop() {
   else {
     digitalWrite(directionPin, HIGH);
   }
-  uint8_t absSteps = abs(stepsToGo);
+  int absSteps = abs(stepsToGo);
   if (absSteps > 0){
-    if (absSteps > 100){
-      delayTime = 150;
+    if (absSteps > 400){
+      delayTime = 125;
     }
-    else if (absSteps > 50){
-      delayTime = 225;
+    else if (absSteps > 250){
+      delayTime = 175;
     }
     else {
-      delayTime = 300;
+      delayTime = 200;
     }
     digitalWrite(pulsePin, LOW);
     delayMicroseconds(delayTime);
