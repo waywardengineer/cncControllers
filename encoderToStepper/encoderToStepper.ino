@@ -10,7 +10,7 @@ const uint8_t stateBothTriggered = 3;
 
 uint8_t thisState = 0;
 uint8_t lastState;
-uint8_t delayTime;
+unsigned long delayTime;
 
 bool aPinState;
 bool bPinState;
@@ -19,13 +19,13 @@ int stepsToGo = 0;
 int stepsPerNotch = 1;
 long timeOfLastStop;
 long timeSinceLastStop = 1000;
-long nextStepMicrosecondsTime = 0;
+unsigned long nextStepMicrosecondsTime = 0;
+unsigned long nowMicroSeconds;
+const long minStepTime = 300;
+const long maxStepTime = 12000;
 
-const int minStepTime = 150;
-const int maxStepTime = 500;
-
-const int stepsToGoRampStart = 10;
-const int stepsToGoRampEnd = 800;
+const long stepsToGoRampStart = 15;
+const long stepsToGoRampEnd = 800;
 
 void setup() {
   pinMode (APin, INPUT);
@@ -58,10 +58,10 @@ void loop() {
     long timeOfThisStop = millis();
     timeSinceLastStop = timeOfThisStop - timeOfLastStop;
     timeOfLastStop = timeOfThisStop;
-    if (timeSinceLastStop < 100){
+    if (timeSinceLastStop < 300){
       stepsPerNotch = 15;
     }
-    else if (timeSinceLastStop > 200){
+    else if (timeSinceLastStop < 500){
       stepsPerNotch = 7;
     }
     else {
@@ -82,13 +82,13 @@ void loop() {
     else {
       digitalWrite(directionPin, HIGH);
     }
-    int absSteps = abs(stepsToGo);
-    delayTime = map(constrain(absSteps, stepsToGoRampStart, stepsToGoRampEnd), stepsToGoRampStart, stepsToGoRampEnd, maxStepTime, minStepTime);
+    long absSteps =  constrain(abs(stepsToGo), stepsToGoRampStart, stepsToGoRampEnd);
+    delayTime = map(absSteps, stepsToGoRampStart, stepsToGoRampEnd, maxStepTime, minStepTime);
   }
-  long nowMicroSeconds = micros();
+  nowMicroSeconds = micros();
   if (stepsToGo != 0 && nowMicroSeconds > nextStepMicrosecondsTime){
     digitalWrite(pulsePin, LOW);
-    delayMicroseconds(100);
+    delayMicroseconds(150);
     digitalWrite(pulsePin, HIGH);  
     nextStepMicrosecondsTime = nowMicroSeconds + delayTime;
     stepsToGo += stepsToGo < 0 ? 1 : -1; 
